@@ -6,12 +6,12 @@ from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.llms.groq import Groq
 import torch
 from llama_index.core.agent import ReActAgent
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 from llama_index.core.tools import QueryEngineTool
-from llama_parse import LlamaParse
+from llama_index.vector_stores.elasticsearch import ElasticsearchStore
 
 # Load environment variables
-load_dotenv()
+# load_dotenv()
 
 # Set up Streamlit page configuration
 st.set_page_config(page_title="Document Q&A", page_icon="📚", layout="wide")
@@ -24,8 +24,8 @@ else:
     st.warning("Using CPU")
 
 # Set up environment variables
-os.environ["GROQ_API_KEY"] = "ANY" # Groq API
-os.environ["LLAMA_CLOUD_API_KEY"] = "ANY" # Llama Parser
+os.environ["GROQ_API_KEY"] = "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" # Groq API
+os.environ["LLAMA_CLOUD_API_KEY"] = "llx-QjpOoj9QxyW3SfC9R3SKbuJZNAuwp9u8fY5467aDsk3OOH1e" # Llama Parser
 
 # Initialize Groq LLM
 @st.cache_resource
@@ -53,9 +53,7 @@ Settings.llm = llm
 # Load and index documents
 @st.cache_resource
 def load_and_index_documents():
-    documents = LlamaParse(result_type="markdown", num_workers=8).load_data(
-        "./data/art.pdf"
-    )
+    documents = SimpleDirectoryReader(input_dir="./data").load_data()
     documents = [doc for doc in documents if doc.text.strip()]  # Filter out empty documents
     index = VectorStoreIndex.from_documents(documents, show_progress=True)
     return index
@@ -64,18 +62,18 @@ index = load_and_index_documents()
 
 # Create query engine and tool
 query_engine = index.as_query_engine(llm=llm)
-seduction_tool = QueryEngineTool(
+networking_tool = QueryEngineTool(
     query_engine=query_engine,
     metadata=ToolMetadata(
-        description="A RAG Engine with expertise in seduction of people based on Art Of Seduction book",
-        name="seduction_tool"
+        name="networking_tool",
+        description="A comprehensive Retrieval-Augmented Generation (RAG) Engine specialized in computer networks, protocols, architectures, and cybersecurity. It provides in-depth knowledge on topics such as TCP/IP, OSI model, routing, switching, wireless networks, network security, and emerging technologies like SDN and 5G. Ideal for answering technical questions, explaining concepts, and providing practical insights on network design and troubleshooting."
     )
 )
 
 # Initialize ReActAgent
 @st.cache_resource
 def get_agent():
-    return ReActAgent.from_tools([seduction_tool], llm=llm, verbose=True, max_iterations=-1)
+    return ReActAgent.from_tools([networking_tool], llm=llm, verbose=True, max_iterations=-1)
 
 agent = get_agent()
 
