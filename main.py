@@ -18,12 +18,12 @@ if torch.cuda.is_available():
 else:
     print("USING CPU.")
 
-os.environ["GROQ_API_KEY"] = "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"
+os.environ["GROQ_API_KEY"] = ""
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
-os.environ["LANGCHAIN_API_KEY"] = "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"
+os.environ["LANGCHAIN_API_KEY"] = ""
 os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com"
 os.environ["LANGCHAIN_PROJECT"] = "pr-frosty-talent-74"
-os.environ["LLAMA_CLOUD_API_KEY"] = "llx-rMqwTUPsx9FNxKKgN0Rfrk0gaiUspgP8WRrmtfnw5arXCyIm"
+os.environ["LLAMA_CLOUD_API_KEY"] = ""
 
 llm = Groq(model="llama3-70b-8192", api_key=os.environ["GROQ_API_KEY"])
 
